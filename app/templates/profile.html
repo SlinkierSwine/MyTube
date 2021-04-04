@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row row-cols-6 row-cols-md-10 g-4">
+<h1>{{ user.name }}</h1>
 {% for video in videos %}
     <a href="/watch/{{ video.id }}" style="text-decoration: none; color: white">
         <div class="card" style="width: 10rem; background: #343A40">
-        <img src="/static/videos/{{ video.user_id | string + '/' + video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f') + '/' + video.preview }}" class="card-img-top" alt="...">
+        <img src="/static/videos/{{ user.id | string + '/' + video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f') + '/' + video.preview }}" class="card-img-top" alt="...">
         <div class="card-body">
             <h5 class="card-title">{{ video.title }}</h5>
             <p class="card-text">{{ video.description }}</p>
@@ -13,5 +13,4 @@
     </div>
     </a>
 {% endfor %}
-</div>
 {% endblock %}

@@ -7,11 +7,12 @@
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/styles.css">
     <title>MyTube</title>
 </head>
 <body>
 <!-- Begin page content -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
+<nav class="navbar navbar-expand-lg navbar-dark  mb-2" style="background: #202020">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">MyTube</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -34,13 +35,13 @@
         </div>
         <form class="d-flex justify-content-center">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                <button class="btn btn-secondary mx-3" type="submit">Search</button>
         </form>
         <div class="collapse navbar-collapse justify-content-end">
             {% if current_user.is_authenticated %}
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">{{ current_user.name }}</a>
+                    <a class="nav-link" href="/profile/{{ current_user.id }}">{{ current_user.name }}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">Выйти</a>

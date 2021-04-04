@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<figure>
+    <video width="1200" height="600" controls="'controls" autoplay>
+        <source src="/static/videos/{{ video.user_id | string + '/' + video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f') + '/' + video.file_name }}" type="video/mp4">
+    </video>
+    <h2>{{ video.title }}</h2>
+    <h4>{{ author.name }}</h4>
+    <p>{{ video.description }}</p>
+</figure>
+
+{% endblock %}

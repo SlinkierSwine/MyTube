@@ -1,6 +1,5 @@
 from application import app, login_manager
-from flask import render_template, request, redirect
-from werkzeug.utils import secure_filename
+from flask import render_template, redirect, abort
 import os
 from data.forms import *
 from data import db_session
@@ -108,10 +107,20 @@ def upload():
                            form=form)
 
 
-@app.route('/uploader', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        file = request.files['file']
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-        return 'file uploaded successfully'
+@app.route('/watch/<int:video_id>')
+def show_video(video_id):
+    db_sess = db_session.create_session()
+    video = db_sess.query(Video).get(video_id)
+    author = db_sess.query(User).get(video.user_id)
+    if not video:
+        abort(404)
+    else:
+        return render_template('player.html', video=video, author=author)
+
+
+@app.route('/profile/<int:user_id>')
+def profile(user_id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).get(user_id)
+    videos = db_sess.query(Video).filter(Video.user_id == user_id)
+    return render_template('profile.html', user=user, videos=videos)
