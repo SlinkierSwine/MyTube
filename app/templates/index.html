@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row row-cols-10 row-cols-md-10 g-4">
+{% for video in videos %}
+    <div class="card" style="width: 10rem;">
+        <img src="static/videos/{{ video.user_id | string + '/' + video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f') + '/' + video.preview }}" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">{{ video.title }}</h5>
+            <p class="card-text">{{ video.description }}</p>
+        </div>
+    </div>
+{% endfor %}
+</div>
+{% endblock %}
