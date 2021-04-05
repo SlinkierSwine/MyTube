@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h1>{{ h }}</h1>
 <div class="row row-cols-6 row-cols-md-10 g-4">
 {% for video in videos %}
     <a href="/watch/{{ video.id }}" style="text-decoration: none; color: white">

@@ -3,14 +3,19 @@
 {% block content %}
 <h1>{{ user.name }}</h1>
 {% for video in videos %}
-    <a href="/watch/{{ video.id }}" style="text-decoration: none; color: white">
         <div class="card" style="width: 10rem; background: #343A40">
-        <img src="/static/videos/{{ user.id | string + '/' + video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f') + '/' + video.preview }}" class="card-img-top" alt="...">
-        <div class="card-body">
-            <h5 class="card-title">{{ video.title }}</h5>
-            <p class="card-text">{{ video.description }}</p>
-        </div>
+           <a href="/watch/{{ video.id }}" style="text-decoration: none; color: white">
+                <img src="/static/videos/{{ user.id | string + '/' + video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f') + '/' + video.preview }}" class="card-img-top" alt="...">
+           </a>
+            <div class="card-body">
+                <a href="/watch/{{ video.id }}" style="text-decoration: none; color: white">
+                    <h5 class="card-title">{{ video.title }}</h5>
+                </a>
+                <p class="card-text">{{ video.created_date.strftime('%m-%d-%Y-%H-%M-%S') }}</p>
+                <div class="btn btn-primary">Удалить</div>
+            </div>
     </div>
-    </a>
+
+
 {% endfor %}
 {% endblock %}

@@ -1,5 +1,5 @@
 from application import app, login_manager
-from flask import render_template, redirect, abort
+from flask import render_template, redirect, abort, request
 import os
 from data.forms import *
 from data import db_session
@@ -8,13 +8,20 @@ from data.models.video import Video
 from flask_login import login_user, logout_user, login_required, current_user
 from data._secure_filename import secure_filename_w_cyrillic
 import datetime
+from sqlalchemy import func
 
 
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
-    videos = db_sess.query(Video).filter(Video.is_private is not True)
-    return render_template('index.html', videos=videos)
+    q = request.args.get('search')
+    if q:
+        videos = db_sess.query(Video).filter(func.lower(Video.title).contains(q.lower()) | func.lower(Video.description).contains(q.lower()))
+        h = f'Результат запроса: {q}'
+    else:
+        videos = db_sess.query(Video).filter(Video.is_private is not True)
+        h = 'Видео'
+    return render_template('index.html', videos=videos, h=h)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -106,21 +113,3 @@ def upload():
     return render_template('videos.html', title='Добавление видео',
                            form=form)
 
-
-@app.route('/watch/<int:video_id>')
-def show_video(video_id):
-    db_sess = db_session.create_session()
-    video = db_sess.query(Video).get(video_id)
-    author = db_sess.query(User).get(video.user_id)
-    if not video:
-        abort(404)
-    else:
-        return render_template('player.html', video=video, author=author)
-
-
-@app.route('/profile/<int:user_id>')
-def profile(user_id):
-    db_sess = db_session.create_session()
-    user = db_sess.query(User).get(user_id)
-    videos = db_sess.query(Video).filter(Video.user_id == user_id)
-    return render_template('profile.html', user=user, videos=videos)
