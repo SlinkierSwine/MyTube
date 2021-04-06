@@ -30,15 +30,6 @@
             </p>
         {% endfor %}
     </div>
-    <div>
-        {{ form.content.label }}<br>
-        {{ form.content(class="form-control") }}<br>
-        {% for error in form.content.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </div>
     <div>{{ form.is_private() }} {{ form.is_private.label }}</div>
     <div>{{ form.submit(type="submit", class="btn btn-primary mt-5") }}</div>
 </form>

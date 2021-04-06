@@ -1,5 +1,5 @@
 from application import app, login_manager
-from flask import render_template, redirect, abort, request
+from flask import render_template, redirect, abort, request, url_for
 import os
 from data.forms import *
 from data import db_session
@@ -19,7 +19,7 @@ def index():
         videos = db_sess.query(Video).filter(func.lower(Video.title).contains(q.lower()) | func.lower(Video.description).contains(q.lower()))
         h = f'Результат запроса: {q}'
     else:
-        videos = db_sess.query(Video).filter(Video.is_private is not True)
+        videos = db_sess.query(Video).filter(Video.is_private != 1)
         h = 'Видео'
     return render_template('index.html', videos=videos, h=h)
 

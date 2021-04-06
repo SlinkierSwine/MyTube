@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import PasswordField, BooleanField, SubmitField, TextAreaField, StringField, FileField
 from wtforms.validators import DataRequired, InputRequired
 from wtforms.fields.html5 import EmailField
+from flask_wtf.file import FileAllowed
 
 
 class RegisterForm(FlaskForm):
@@ -22,7 +23,18 @@ class LoginForm(FlaskForm):
 class VideoForm(FlaskForm):
     title = TextAreaField('Название', validators=[DataRequired()])
     description = TextAreaField('Описание')
-    image = FileField('Превью', validators=[InputRequired()])
-    content = FileField('Видео', validators=[InputRequired()])
+    image = FileField('Превью',
+                      validators=[InputRequired(), FileAllowed(['jpg', 'png'], 'Только изображения формата .jpg и .png')])
+    content = FileField('Видео',
+                        validators=[InputRequired(), FileAllowed(['mp4', 'avi'], 'Только видео формата .mp4 и .avi')])
     is_private = BooleanField('Приватное')
     submit = SubmitField('Загрузить')
+
+
+class EditVideoForm(FlaskForm):
+    title = TextAreaField('Название', validators=[DataRequired()])
+    description = TextAreaField('Описание')
+    image = FileField('Превью',
+                      validators=[FileAllowed(['jpg', 'png'], 'Только изображения формата .jpg и .png')])
+    is_private = BooleanField('Приватное')
+    submit = SubmitField('Изменить')

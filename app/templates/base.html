@@ -21,7 +21,7 @@
         </button>
 
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-            <form class="d-flex justify-content-start mx-5" method="get">
+            <form class="d-flex justify-content-start mx-5" action="/" method="get">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
                 <button class="btn btn-secondary mx-3" type="submit">Search</button>
         </form>
@@ -31,7 +31,7 @@
                         <a class="nav-link" aria-current="page" href="/upload">Загрузить видео</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/profile/{{ current_user.id }}">{{ current_user.name }}</a>
+                    <a class="nav-link" href="/account/{{ current_user.id }}">{{ current_user.name }}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">Выйти</a>
