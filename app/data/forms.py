@@ -38,3 +38,16 @@ class EditVideoForm(FlaskForm):
                       validators=[FileAllowed(['jpg', 'png'], 'Только изображения формата .jpg и .png')])
     is_private = BooleanField('Приватное')
     submit = SubmitField('Изменить')
+
+
+class EditUserForm(FlaskForm):
+    email = EmailField('Почта', validators=[DataRequired()])
+    name = StringField('Имя пользователя', validators=[DataRequired()])
+    submit = SubmitField('Изменить данные')
+
+
+class EditPasswordForm(FlaskForm):
+    old_password = PasswordField('Старый пароль', validators=[DataRequired()])
+    password = PasswordField('Новый пароль', validators=[DataRequired()])
+    password_again = PasswordField('Повторите новый пароль', validators=[DataRequired()])
+    submit = SubmitField('Изменить пароль')

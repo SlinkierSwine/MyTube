@@ -1,27 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{ user.name }}</h1>
+<h1>
+    {{ user.name }}<br>
+    {% if current_user.is_authenticated and user.id == current_user.id %}
+    <a href="{{ url_for('account.edit_user', user_id=current_user.id) }}" style="text-decoration: none; color: white">Редактировать профиль</a><br>
+    <a href="{{ url_for('account.edit_password', user_id=current_user.id) }}" style="text-decoration: none; color: white">Редактировать пароль</a>
+    {% endif %}
+</h1>
+<div class="row row-cols-6 row-cols-md-5 g-4">
 {% for video in videos %}
         <div class="card" style="width: 10rem; background: #343A40">
-           <a href="/watch/{{ video.id }}" style="text-decoration: none; color: white">
-                <img src="/static/videos/{{ user.id | string + '/' + video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f') + '/' + video.preview }}" class="card-img-top" alt="...">
+           <a href="{{ url_for('watch.show_video', video_id=video.id)}}" style="text-decoration: none; color: white">
+                <img src="{{pathsep + pathsep.join(['static', 'storage', video.user_id | string, video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f'), video.preview]) }}" class="card-img-top" alt="...">
            </a>
             <div class="card-body">
-                <a href="/watch/{{ video.id }}" style="text-decoration: none; color: white">
+                <a href="{{ url_for('watch.show_video', video_id=video.id)}}" style="text-decoration: none; color: white">
                     <h5 class="card-title">{{ video.title }}</h5>
                 </a>
                 <p class="card-text">{{ video.created_date.strftime('%m-%d-%Y-%H-%M-%S') }}</p>
-                <a href="delete/{{ video.id }}">
+                {% if current_user.is_authenticated and user.id == current_user.id %}
+                <a href="{{ url_for('account.delete', video_id=video.id)}}">
                     <div class="btn btn-primary">Удалить</div>
                 </a>
                 <a href="{{url_for('account.edit_video', video_id=video.id)}}">
                     <div class="btn btn-primary">Изменить</div>
                 </a>
-
+                {% endif %}
             </div>
     </div>
-
-
 {% endfor %}
+</div>
 {% endblock %}

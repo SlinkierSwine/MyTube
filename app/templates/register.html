@@ -41,6 +41,10 @@
         {% endfor %}
     </p>
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-    {{message}}
+    {% if message %}
+    <p class="alert alert-danger" role="alert">
+            {{ message }}
+    </p>
+    {% endif %}
 </form>
 {% endblock %}

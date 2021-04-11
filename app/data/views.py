@@ -13,6 +13,7 @@ from sqlalchemy import func
 
 @app.route("/")
 def index():
+    pathsep = os.path.sep
     db_sess = db_session.create_session()
     q = request.args.get('search')
     if q:
@@ -21,7 +22,7 @@ def index():
     else:
         videos = db_sess.query(Video).filter(Video.is_private != 1)
         h = 'Видео'
-    return render_template('index.html', videos=videos, h=h)
+    return render_template('index.html', videos=videos, h=h, pathsep=pathsep, title='MyTube')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -29,12 +30,12 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
+            return render_template('register.html', title='MyTube: Регистрация',
                                    form=form,
                                    message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
+            return render_template('register.html', title='MyTube: Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(
@@ -45,7 +46,7 @@ def register():
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
-    return render_template('register.html', title='Регистрация', form=form)
+    return render_template('register.html', title='MyTube: Регистрация', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -59,8 +60,9 @@ def login():
             return redirect("/")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
-                               form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+                               form=form,
+                               title='MyTube: Авторизация')
+    return render_template('login.html', title='MyTube: Авторизация', form=form)
 
 
 @app.route('/logout')
@@ -110,6 +112,6 @@ def upload():
         image.save(os.path.join(path_to_file, video.preview))
 
         return redirect('/')
-    return render_template('videos.html', title='Добавление видео',
+    return render_template('videos.html', title='MyTube: Добавление видео',
                            form=form)
 
