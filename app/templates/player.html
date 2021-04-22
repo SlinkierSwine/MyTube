@@ -1,6 +1,53 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script type="text/javascript">
+    $(function(){
+        let video_id = {{video.id | safe}}
+        $.ajax({
+            url: $SCRIPT_ROOT + '{{url_for('watch.is_liked') | safe}}',
+            data: {video_id: video_id},
+            type: 'GET',
+            success: function(response){
+                let json = jQuery.parseJSON(response);
+                let btn = document.querySelector('#like');
+                if (json.is_liked === true){
+                    liked = true;
+                    if (btn.classList.contains('btn-secondary')){
+                        btn.classList.toggle('btn-secondary');
+                        btn.classList.toggle('btn-primary');
+                    }
+                }
+                else {
+                    liked = false;
+                    if (btn.classList.contains('btn-primary')) {
+                        btn.classList.toggle('btn-primary');
+                        btn.classList.toggle('btn-secondary');
+                    }
+                }
+            },
+            error: function(error){
+                console.log(error);
+            }
+        })
+    });
+
+    function like() {
+        let video_id = {{video.id | safe}}
+        console.log(liked);
+        $.ajax({
+            url: $SCRIPT_ROOT + '{{url_for('watch.like') | safe}}',
+            data: {video_id: video_id, is_liked: liked},
+            type: 'GET',
+            success: function(response){
+                console.log(response)
+            },
+            error: function(error){
+                console.log(error);
+            }
+        })
+    }
+</script>
 <figure>
     <video width="1200" height="600" controls="'controls" autoplay>
         <source src="{{pathsep + pathsep.join(['static', 'storage', video.user_id | string, video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f'), video.file_name]) }}" type="video/mp4">
@@ -10,6 +57,6 @@
         <h4>{{ author.name }}</h4>
     </a>
     <p>{{ video.description }}</p>
+    <button class="btn btn-secondary" id="like" onclick="like()">Like</button>
 </figure>
-
 {% endblock %}

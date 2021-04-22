@@ -1,7 +1,5 @@
-import datetime
 import sqlalchemy
 from sqlalchemy import orm
-
 from ..db_session import SqlAlchemyBase
 from sqlalchemy_serializer import SerializerMixin
 
@@ -21,3 +19,7 @@ class Video(SqlAlchemyBase, SerializerMixin):
     user_id = sqlalchemy.Column(sqlalchemy.Integer,
                                 sqlalchemy.ForeignKey("users.id"))
     user = orm.relation('User')
+
+    likers = orm.relation("User",
+                          secondary="likes",
+                          backref="user")
