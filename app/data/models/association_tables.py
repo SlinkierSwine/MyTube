@@ -8,5 +8,6 @@ user_like_to_video = sqlalchemy.Table(
     sqlalchemy.Column('user', sqlalchemy.Integer,
                       sqlalchemy.ForeignKey('users.id')),
     sqlalchemy.Column('video', sqlalchemy.Integer,
-                      sqlalchemy.ForeignKey('videos.id'))
+                      sqlalchemy.ForeignKey('videos.id')),
+    sqlalchemy.Column('like_or_dislike', sqlalchemy.Integer)
 )

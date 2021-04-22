@@ -2,50 +2,62 @@
 
 {% block content %}
 <script type="text/javascript">
-    $(function(){
-        let video_id = {{video.id | safe}}
-        $.ajax({
-            url: $SCRIPT_ROOT + '{{url_for('watch.is_liked') | safe}}',
-            data: {video_id: video_id},
-            type: 'GET',
-            success: function(response){
-                let json = jQuery.parseJSON(response);
-                let btn = document.querySelector('#like');
-                if (json.is_liked === true){
-                    liked = true;
+    function set_btn_color(liked, btn) {
+        if (liked === true){
+            console.log('change to blue');
                     if (btn.classList.contains('btn-secondary')){
                         btn.classList.toggle('btn-secondary');
                         btn.classList.toggle('btn-primary');
                     }
                 }
-                else {
-                    liked = false;
+        else {
+            console.log('change to grey');
                     if (btn.classList.contains('btn-primary')) {
                         btn.classList.toggle('btn-primary');
                         btn.classList.toggle('btn-secondary');
                     }
-                }
-            },
-            error: function(error){
-                console.log(error);
+    }
+    }
+
+    function is_liked(){
+        let video_id = {{video.id | safe}}
+        return  $.ajax({
+            url: $SCRIPT_ROOT + '{{url_for('watch.json_is_liked') | safe}}',
+            data: {video_id: video_id},
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                let liked = jQuery.parseJSON(response).is_liked;
+                console.log(liked);
+                let btn = document.querySelector('#like');
+                set_btn_color(liked, btn)
             }
         })
-    });
+    }
+
+    $(is_liked(liked => {
+        liked = jQuery.parseJSON(liked).is_liked;
+        console.log(liked);
+        let btn = document.querySelector('#like');
+        set_btn_color(liked, btn)
+    }));
 
     function like() {
-        let video_id = {{video.id | safe}}
-        console.log(liked);
-        $.ajax({
-            url: $SCRIPT_ROOT + '{{url_for('watch.like') | safe}}',
-            data: {video_id: video_id, is_liked: liked},
-            type: 'GET',
-            success: function(response){
-                console.log(response)
-            },
-            error: function(error){
-                console.log(error);
-            }
-        })
+            let video_id = {{video.id | safe}}
+            $.ajax({
+                url: $SCRIPT_ROOT + '{{url_for('watch.like') | safe}}',
+                data: {video_id: video_id},
+                type: 'GET',
+                success: function (response) {
+                    console.log(response);
+                    let liked = jQuery.parseJSON(response).is_liked;
+                    let btn = document.querySelector('#like');
+                    set_btn_color(!liked, btn)
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
     }
 </script>
 <figure>
@@ -58,5 +70,6 @@
     </a>
     <p>{{ video.description }}</p>
     <button class="btn btn-secondary" id="like" onclick="like()">Like</button>
+    <button class="btn btn-secondary" id="dislike" onclick="disllike()">Dislike</button>
 </figure>
 {% endblock %}
