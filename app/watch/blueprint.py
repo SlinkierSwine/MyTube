@@ -29,10 +29,10 @@ def show_video(video_id):
     pathsep = os.path.sep
     db_sess = db_session.create_session()
     video = db_sess.query(Video).get(video_id)
-    author = db_sess.query(User).get(video.user_id)
     if not video:
         abort(404)
     else:
+        author = db_sess.query(User).get(video.user_id)
         return render_template('player.html', video=video, author=author, pathsep=pathsep, title=f'MyTube: {video.title}')
 
 

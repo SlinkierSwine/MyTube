@@ -35,12 +35,14 @@
         })
     }
 
+    {% if current_user.is_authenticated %}
     $(is_liked(liked => {
         liked = jQuery.parseJSON(liked).is_liked;
         console.log(liked);
         let btn = document.querySelector('#like');
         set_btn_color(liked, btn)
     }));
+    {% endif %}
 
     function like() {
             let video_id = {{video.id | safe}}
@@ -69,7 +71,9 @@
         <h4>{{ author.name }}</h4>
     </a>
     <p>{{ video.description }}</p>
+    {% if current_user.is_authenticated %}
     <button class="btn btn-secondary" id="like" onclick="like()">Like</button>
     <button class="btn btn-secondary" id="dislike" onclick="disllike()">Dislike</button>
+    {% endif %}
 </figure>
 {% endblock %}
