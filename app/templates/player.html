@@ -4,14 +4,12 @@
 <script type="text/javascript">
     function set_btn_color(liked, btn) {
         if (liked === true){
-            console.log('change to blue');
                     if (btn.classList.contains('btn-secondary')){
                         btn.classList.toggle('btn-secondary');
                         btn.classList.toggle('btn-primary');
                     }
                 }
         else {
-            console.log('change to grey');
                     if (btn.classList.contains('btn-primary')) {
                         btn.classList.toggle('btn-primary');
                         btn.classList.toggle('btn-secondary');
@@ -28,21 +26,41 @@
             contentType: 'application/json',
             success: function (response) {
                 let liked = jQuery.parseJSON(response).is_liked;
-                console.log(liked);
                 let btn = document.querySelector('#like');
                 set_btn_color(liked, btn)
             }
         })
     }
 
+    function count_likes(){
+        let video_id = {{video.id | safe}}
+        console.log('asdasd');
+        $.ajax({
+            url: $SCRIPT_ROOT + '{{url_for('watch.json_count_likes') | safe}}',
+            data: {video_id: video_id},
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                let likes = jQuery.parseJSON(response).likes;
+                console.log(likes);
+                console.log('asdasd');
+                document.querySelector('#like_count').textContent = likes.toString();
+            },
+            error: function (error) {
+                    console.log(error);
+                }
+        })
+    }
+
     {% if current_user.is_authenticated %}
     $(is_liked(liked => {
         liked = jQuery.parseJSON(liked).is_liked;
-        console.log(liked);
         let btn = document.querySelector('#like');
-        set_btn_color(liked, btn)
+        set_btn_color(liked, btn);
+
     }));
     {% endif %}
+    $(count_likes());
 
     function like() {
             let video_id = {{video.id | safe}}
@@ -51,10 +69,10 @@
                 data: {video_id: video_id},
                 type: 'GET',
                 success: function (response) {
-                    console.log(response);
                     let liked = jQuery.parseJSON(response).is_liked;
                     let btn = document.querySelector('#like');
-                    set_btn_color(!liked, btn)
+                    set_btn_color(!liked, btn);
+                    count_likes()
                 },
                 error: function (error) {
                     console.log(error);
@@ -73,7 +91,14 @@
     <p>{{ video.description }}</p>
     {% if current_user.is_authenticated %}
     <button class="btn btn-secondary" id="like" onclick="like()">Like</button>
+    <p id="like_count">0</p><br>
     <button class="btn btn-secondary" id="dislike" onclick="disllike()">Dislike</button>
+    <p id="dislike_count">0</p>
+    {% else %}
+    <h5>Like</h5>
+    <p id="like_count">0</p><br>
+    <h5>Disike</h5>
+    <p id="dislike_count">0</p><br>
     {% endif %}
 </figure>
 {% endblock %}

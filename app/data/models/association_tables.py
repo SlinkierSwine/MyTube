@@ -2,7 +2,7 @@ import sqlalchemy
 from ..db_session import SqlAlchemyBase
 
 
-user_like_to_video = sqlalchemy.Table(
+user_rate_video = sqlalchemy.Table(
     'likes',
     SqlAlchemyBase.metadata,
     sqlalchemy.Column('user', sqlalchemy.Integer,

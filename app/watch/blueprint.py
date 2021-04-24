@@ -2,7 +2,8 @@ from flask import Blueprint, abort, render_template, request, json
 from data import db_session
 from data.models.video import Video
 from data.models.user import User
-from data.models.association_tables import user_like_to_video
+from data.models.rating import Rating
+from data.models.association_tables import user_rate_video
 import os
 from flask_login import current_user
 
@@ -16,10 +17,10 @@ watch_blueprint = Blueprint(
 
 def is_liked(video_id):
     db_sess = db_session.create_session()
-    query_likes = db_sess.query(Video).join(user_like_to_video).join(User).filter(
-        (user_like_to_video.c.user == User.id) & (user_like_to_video.c.video == Video.id) & (
+    query_user_liked = db_sess.query(Video).join(Rating).join(User).filter(
+        (Rating.user_rate_id == User.id) & (Rating.video_rate_id == Video.id) & (
                     User.id == current_user.id) & (Video.id == video_id)).first()
-    if query_likes:
+    if query_user_liked:
         return True
     return False
 
@@ -50,18 +51,25 @@ def like():
     db_sess = db_session.create_session()
     video_id = request.args.get('video_id', 0, type=int)
     liked = is_liked(video_id)
-    print('is_liked:', is_liked, 'video_id:', video_id)
     if not liked:
         video = db_sess.query(Video).filter(Video.id == video_id).first()
         user = db_sess.query(User).filter(User.id == current_user.id).first()
-        video.likers.append(user)
-        user.liked.append(video)
+        rating = Rating(like_or_dislike=1)
+        video.likers.append(user, like_or_dislike=1)
+        user.liked.append(video, like_or_dislike=1)
         db_sess.commit()
-        print('added like')
     elif liked:
         video = db_sess.query(Video).filter(Video.id == video_id).first()
         user = db_sess.query(User).filter(User.id == current_user.id).first()
         video.likers.remove(user)
         db_sess.commit()
-        print('deleted like')
     return json.dumps({'is_liked': liked})
+
+
+@watch_blueprint.route('/_count_likes')
+def json_count_likes():
+    db_sess = db_session.create_session()
+    video_id = request.args.get('video_id', 0, type=int)
+    query_likes = db_sess.query(Video).join(Rating).join(User).filter(
+        (Rating.user_rate_id == User.id) & (Rating.video_rate_id == Video.id) & (Video.id == video_id)).count()
+    return json.dumps({'likes': query_likes})
