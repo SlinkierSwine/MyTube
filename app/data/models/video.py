@@ -20,5 +20,9 @@ class Video(SqlAlchemyBase, SerializerMixin):
                                 sqlalchemy.ForeignKey("users.id"))
     user = orm.relation('User')
 
-    rater = orm.relation("Rating",
-                          backref="video_liked")
+    likers = orm.relation("User",
+                         secondary='likes',
+                         backref="video_liked")
+    dislikers = orm.relation("User",
+                         secondary='dislikes',
+                         backref="video_disliked")

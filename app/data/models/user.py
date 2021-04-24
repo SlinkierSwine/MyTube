@@ -20,8 +20,12 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
                                      default=datetime.datetime.now)
     videos = orm.relation("Video", back_populates='user')
 
-    rated = orm.relation("Rating",
+    liked = orm.relation("Video",
+                         secondary='likes',
                          backref="user_liker")
+    disliked = orm.relation("Video",
+                            secondary='dislikes',
+                            backref="user_disliker")
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
