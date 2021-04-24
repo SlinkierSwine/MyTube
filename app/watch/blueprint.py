@@ -25,6 +25,15 @@ def is_liked(video_id):
     return False
 
 
+def is_disliked(video_id):
+    db_sess = db_session.create_session()
+    query_dislikes = db_sess.query(Video).join(user_dislike_video).join(User).filter(
+         (User.id == current_user.id) & (Video.id == video_id)).first()
+    if query_dislikes:
+        return True
+    return False
+
+
 @watch_blueprint.route('/<int:video_id>')
 def show_video(video_id):
     pathsep = os.path.sep
@@ -37,13 +46,12 @@ def show_video(video_id):
         return render_template('player.html', video=video, author=author, pathsep=pathsep, title=f'MyTube: {video.title}')
 
 
-@watch_blueprint.route('/_is_liked')
-def json_is_liked():
+@watch_blueprint.route('/_is_rated')
+def json_is_rated():
     video_id = request.args.get('video_id', 0, type=int)
     liked = is_liked(video_id)
-    if liked:
-        return json.dumps({'is_liked': True})
-    return json.dumps({'is_liked': False})
+    disliked = is_disliked(video_id)
+    return json.dumps({'is_liked': liked, 'is_disliked': disliked})
 
 
 @watch_blueprint.route('/_like')
@@ -51,7 +59,10 @@ def like():
     db_sess = db_session.create_session()
     video_id = request.args.get('video_id', 0, type=int)
     liked = is_liked(video_id)
+    disliked = is_disliked(video_id)
     if not liked:
+        if disliked:
+            remove_dislike(video_id)
         video = db_sess.query(Video).filter(Video.id == video_id).first()
         user = db_sess.query(User).filter(User.id == current_user.id).first()
         rating = Rating(like_or_dislike=1)
@@ -59,11 +70,52 @@ def like():
         user.liked.append(video, like_or_dislike=1)
         db_sess.commit()
     elif liked:
+        remove_like(video_id)
+    return json.dumps({'is_liked': liked})
+
+
+def remove_like(video_id):
+    db_sess = db_session.create_session()
+    video = db_sess.query(Video).filter(Video.id == video_id).first()
+    user = db_sess.query(User).filter(User.id == current_user.id).first()
+    video.likers.remove(user)
+    db_sess.commit()
+
+
+@watch_blueprint.route('/_dislike')
+def dislike():
+    db_sess = db_session.create_session()
+    video_id = request.args.get('video_id', 0, type=int)
+    liked = is_liked(video_id)
+    disliked = is_disliked(video_id)
+    if not disliked:
+        if liked:
+            remove_like(video_id)
         video = db_sess.query(Video).filter(Video.id == video_id).first()
         user = db_sess.query(User).filter(User.id == current_user.id).first()
-        video.likers.remove(user)
+        video.dislikers.append(user)
+        user.disliked.append(video)
         db_sess.commit()
-    return json.dumps({'is_liked': liked})
+    elif disliked:
+        remove_dislike(video_id)
+    return json.dumps({'is_disliked': disliked})
+
+
+def remove_dislike(video_id):
+    db_sess = db_session.create_session()
+    video = db_sess.query(Video).filter(Video.id == video_id).first()
+    user = db_sess.query(User).filter(User.id == current_user.id).first()
+    video.dislikers.remove(user)
+    db_sess.commit()
+
+
+@watch_blueprint.route('/_count_rates')
+def json_count_rates():
+    db_sess = db_session.create_session()
+    video_id = request.args.get('video_id', 0, type=int)
+    query_count_likes = db_sess.query(Video).join(user_like_video).join(User).filter(Video.id == video_id).count()
+    query_count_dislikes = db_sess.query(Video).join(user_dislike_video).join(User).filter(Video.id == video_id).count()
+    return json.dumps({'likes': query_count_likes, 'dislikes': query_count_dislikes})
 
 
 @watch_blueprint.route('/_count_likes')

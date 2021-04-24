@@ -2,8 +2,8 @@
 
 {% block content %}
 <script type="text/javascript">
-    function set_btn_color(liked, btn) {
-        if (liked === true){
+    function set_btn_color(rated, btn) {
+        if (rated === true){
                     if (btn.classList.contains('btn-secondary')){
                         btn.classList.toggle('btn-secondary');
                         btn.classList.toggle('btn-primary');
@@ -17,34 +17,38 @@
     }
     }
 
-    function is_liked(){
+    {% if current_user.is_authenticated %}
+    $(function is_rated(){
         let video_id = {{video.id | safe}}
-        return  $.ajax({
-            url: $SCRIPT_ROOT + '{{url_for('watch.json_is_liked') | safe}}',
+        $.ajax({
+            url: $SCRIPT_ROOT + '{{url_for('watch.json_is_rated') | safe}}',
             data: {video_id: video_id},
             type: 'GET',
             contentType: 'application/json',
             success: function (response) {
-                let liked = jQuery.parseJSON(response).is_liked;
-                let btn = document.querySelector('#like');
-                set_btn_color(liked, btn)
+                liked = jQuery.parseJSON(response).is_liked;
+                let btnlike = document.querySelector('#like');
+                set_btn_color(liked, btnlike);
+                disliked = jQuery.parseJSON(response).is_disliked;
+                let btndislike = document.querySelector('#dislike');
+                set_btn_color(disliked, btndislike);
             }
         })
-    }
+    });
+    {% endif %}
 
-    function count_likes(){
+    function count_rates(){
         let video_id = {{video.id | safe}}
-        console.log('asdasd');
         $.ajax({
-            url: $SCRIPT_ROOT + '{{url_for('watch.json_count_likes') | safe}}',
+            url: $SCRIPT_ROOT + '{{url_for('watch.json_count_rates') | safe}}',
             data: {video_id: video_id},
             type: 'GET',
             contentType: 'application/json',
             success: function (response) {
                 let likes = jQuery.parseJSON(response).likes;
-                console.log(likes);
-                console.log('asdasd');
                 document.querySelector('#like_count').textContent = likes.toString();
+                let dislikes = jQuery.parseJSON(response).dislikes;
+                document.querySelector('#dislike_count').textContent = dislikes.toString();
             },
             error: function (error) {
                     console.log(error);
@@ -52,15 +56,7 @@
         })
     }
 
-    {% if current_user.is_authenticated %}
-    $(is_liked(liked => {
-        liked = jQuery.parseJSON(liked).is_liked;
-        let btn = document.querySelector('#like');
-        set_btn_color(liked, btn);
-
-    }));
-    {% endif %}
-    $(count_likes());
+    $(count_rates());
 
     function like() {
             let video_id = {{video.id | safe}}
@@ -69,10 +65,34 @@
                 data: {video_id: video_id},
                 type: 'GET',
                 success: function (response) {
-                    let liked = jQuery.parseJSON(response).is_liked;
-                    let btn = document.querySelector('#like');
-                    set_btn_color(!liked, btn);
-                    count_likes()
+                    liked = jQuery.parseJSON(response).is_liked;
+                    let btnlike = document.querySelector('#like');
+                    set_btn_color(!liked, btnlike);
+                    disliked = jQuery.parseJSON(response).is_disliked;
+                    let btndislike = document.querySelector('#dislike');
+                    set_btn_color(disliked, btndislike);
+                    count_rates()
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+    }
+
+    function dislike() {
+            let video_id = {{video.id | safe}}
+            $.ajax({
+                url: $SCRIPT_ROOT + '{{url_for('watch.dislike') | safe}}',
+                data: {video_id: video_id},
+                type: 'GET',
+                success: function (response) {
+                    liked = jQuery.parseJSON(response).is_liked;
+                    let btnlike = document.querySelector('#like');
+                    set_btn_color(liked, btnlike);
+                    disliked = jQuery.parseJSON(response).is_disliked;
+                    let btndislike = document.querySelector('#dislike');
+                    set_btn_color(!disliked, btndislike);
+                    count_rates()
                 },
                 error: function (error) {
                     console.log(error);
@@ -90,15 +110,23 @@
     </a>
     <p>{{ video.description }}</p>
     {% if current_user.is_authenticated %}
-    <button class="btn btn-secondary" id="like" onclick="like()">Like</button>
-    <p id="like_count">0</p><br>
-    <button class="btn btn-secondary" id="dislike" onclick="disllike()">Dislike</button>
-    <p id="dislike_count">0</p>
+    <div>
+        <button class="btn btn-secondary" id="like" onclick="like()">Like</button>
+        <p id="like_count">0</p>
+    </div>
+    <div>
+        <button class="btn btn-secondary" id="dislike" onclick="dislike()">Like</button>
+        <p id="dislike_count">0</p>
+    </div>
     {% else %}
-    <h5>Like</h5>
-    <p id="like_count">0</p><br>
-    <h5>Disike</h5>
-    <p id="dislike_count">0</p><br>
+    <div>
+        <h5>Like</h5>
+        <p id="like_count">0</p>
+    </div>
+    <div>
+        <h5>Dislike</h5>
+        <p id="dislike_count">0</p>
+    </div>
     {% endif %}
 </figure>
 {% endblock %}
