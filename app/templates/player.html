@@ -100,32 +100,36 @@
             })
     }
 </script>
-<figure>
-    <video width="1200" height="600" controls="'controls" autoplay>
+<figure style="position: relative; right: 8%">
+    <video width="1280" height="680" controls="'controls" autoplay>
         <source src="{{pathsep + pathsep.join(['static', 'storage', video.user_id | string, video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f'), video.file_name]) }}" type="video/mp4">
     </video>
     <h2>{{ video.title }}</h2>
     <a href="{{ url_for('account.profile', user_id=author.id) }}" style="text-decoration: none; color: white">
-        <h4>{{ author.name }}</h4>
+        <h4>Автор: {{ author.name }}</h4>
     </a>
     <p>{{ video.description }}</p>
     {% if current_user.is_authenticated %}
-    <div>
-        <button class="btn btn-secondary" id="like" onclick="like()">Like</button>
-        <p id="like_count">0</p>
-    </div>
-    <div>
-        <button class="btn btn-secondary" id="dislike" onclick="dislike()">Like</button>
-        <p id="dislike_count">0</p>
+    <div style="display: flex; ">
+        <div style="margin-right: 10px">
+            <button class="btn btn-secondary" id="like" onclick="like()">Like</button>
+            <p id="like_count">0</p>
+        </div>
+        <div>
+            <button class="btn btn-secondary" id="dislike" onclick="dislike()">Dislike</button>
+            <p id="dislike_count">0</p>
+        </div>
     </div>
     {% else %}
-    <div>
-        <h5>Like</h5>
-        <p id="like_count">0</p>
-    </div>
-    <div>
-        <h5>Dislike</h5>
-        <p id="dislike_count">0</p>
+    <div style="display: flex; ">
+        <div style="margin-right: 10px">
+            <h5>Like</h5>
+            <p id="like_count">0</p>
+        </div>
+        <div>
+            <h5>Disike</h5>
+            <p id="dislike_count">0</p>
+        </div>
     </div>
     {% endif %}
 </figure>

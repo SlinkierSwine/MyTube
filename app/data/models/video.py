@@ -18,6 +18,9 @@ class Video(SqlAlchemyBase, SerializerMixin):
 
     user_id = sqlalchemy.Column(sqlalchemy.Integer,
                                 sqlalchemy.ForeignKey("users.id"))
+    likes_count = sqlalchemy.Column(sqlalchemy.Integer)
+    dislikes_count = sqlalchemy.Column(sqlalchemy.Integer)
+
     user = orm.relation('User')
 
     likers = orm.relation("User",

@@ -2,17 +2,30 @@
 
 {% block content %}
 <h1>
-    {{ user.name }}<br>
     {% if current_user.is_authenticated and user.id == current_user.id %}
-    <a href="{{ url_for('account.edit_user', user_id=current_user.id) }}" style="text-decoration: none; color: white">Редактировать профиль</a><br>
-    <a href="{{ url_for('account.edit_password', user_id=current_user.id) }}" style="text-decoration: none; color: white">Редактировать пароль</a>
+    <h1 style="position: relative; right: 32%">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                {{ user.name }}
+            </button>
+            <ul class="dropdown-menu" style="background: #6c757d;" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="{{ url_for('account.edit_user', user_id=current_user.id) }}"
+                       style="color: white">Редактировать профиль</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('account.edit_password', user_id=current_user.id) }}"
+                       style="color: white">Редактировать пароль</a></li>
+            </ul>
+        </div>
+    </h1>
+    {% else %}
+    <h1>{{ user.name }}</h1>
     {% endif %}
 </h1>
-<div class="row row-cols-6 row-cols-md-5 g-4">
+<div class="row row-cols-6 row-cols-md-3 g-4 ">
 {% for video in videos %}
-        <div class="card" style="width: 10rem; background: #343A40">
+        <div class="card p-3" style="width: 300px; background: #181818">
            <a href="{{ url_for('watch.show_video', video_id=video.id)}}" style="text-decoration: none; color: white">
-                <img src="{{pathsep + pathsep.join(['static', 'storage', video.user_id | string, video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f'), video.preview]) }}" class="card-img-top" alt="...">
+                <img src="{{pathsep + pathsep.join(['static', 'storage', video.user_id | string, video.created_date.strftime('%m-%d-%Y-%H-%M-%S-%f'), video.preview]) }}" height="210px"; class="card-img-top" alt="...">
            </a>
             <div class="card-body">
                 <a href="{{ url_for('watch.show_video', video_id=video.id)}}" style="text-decoration: none; color: white">

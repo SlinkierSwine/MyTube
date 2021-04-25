@@ -23,4 +23,12 @@
     </div>
     <div>{{ form.submit(type="submit", class="btn btn-primary mt-5") }}</div>
 </form>
+<div class="container m-3" style="position: relative; right: 2.7%">
+<a href="{{ url_for('account.profile', user_id=current_user.id) }}" style="padding: 10px 10px;
+text-decoration: none;
+-webkit-appearance: button;
+color: white;
+border-radius: 5px;
+background: #007bff;">Назад</a>
+</div>
 {% endblock %}

@@ -65,6 +65,7 @@ def like():
         user = db_sess.query(User).filter(User.id == current_user.id).first()
         video.likers.append(user)
         user.liked.append(video)
+        video.likes_count += 1
         db_sess.commit()
     elif liked:
         remove_like(video_id)
@@ -76,6 +77,7 @@ def remove_like(video_id):
     video = db_sess.query(Video).filter(Video.id == video_id).first()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     video.likers.remove(user)
+    video.likes_count -= 1
     db_sess.commit()
 
 
@@ -92,6 +94,7 @@ def dislike():
         user = db_sess.query(User).filter(User.id == current_user.id).first()
         video.dislikers.append(user)
         user.disliked.append(video)
+        video.dislikes_count += 1
         db_sess.commit()
     elif disliked:
         remove_dislike(video_id)
@@ -103,6 +106,7 @@ def remove_dislike(video_id):
     video = db_sess.query(Video).filter(Video.id == video_id).first()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     video.dislikers.remove(user)
+    video.dislikes_count -= 1
     db_sess.commit()
 
 
@@ -110,7 +114,8 @@ def remove_dislike(video_id):
 def json_count_rates():
     db_sess = db_session.create_session()
     video_id = request.args.get('video_id', 0, type=int)
-    query_count_likes = db_sess.query(Video).join(user_like_video).join(User).filter(Video.id == video_id).count()
-    query_count_dislikes = db_sess.query(Video).join(user_dislike_video).join(User).filter(Video.id == video_id).count()
-    return json.dumps({'likes': query_count_likes, 'dislikes': query_count_dislikes})
+    video = db_sess.query(Video).filter(Video.id == video_id).first()
+    likes = video.likes_count
+    dislikes = video.dislikes_count
+    return json.dumps({'likes': likes, 'dislikes': dislikes})
 

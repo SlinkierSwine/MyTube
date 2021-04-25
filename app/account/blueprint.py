@@ -2,6 +2,7 @@ from flask import Blueprint, abort, render_template, redirect, request
 from data import db_session
 from data.models.video import Video
 from data.models.user import User
+from data.models.association_tables import user_like_video, user_dislike_video
 from data.forms import EditVideoForm, EditUserForm, EditPasswordForm
 from data._secure_filename import secure_filename_w_cyrillic
 from flask_login import login_required, current_user
@@ -38,6 +39,11 @@ def delete(video_id):
     db_sess = db_session.create_session()
     video = db_sess.query(Video).filter(Video.id == video_id, Video.user == current_user).first()
     if video:
+        delete_likes_query = user_like_video.delete().where(user_like_video.c.video_liked == video.id)
+        db_sess.execute(delete_likes_query)
+        delete_dislikes_query = user_dislike_video.delete().where(user_dislike_video.c.video_disliked == video.id)
+        db_sess.execute(delete_dislikes_query)
+
         db_sess.delete(video)
         db_sess.commit()
         path = os.path.join(Config.UPLOAD_PATH,
