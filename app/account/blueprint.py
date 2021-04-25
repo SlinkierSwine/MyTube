@@ -11,6 +11,7 @@ import os
 from config import Config
 
 
+# Блюпринт для профиля пользователя
 account_blueprint = Blueprint(
     'account',
     __name__,
@@ -20,6 +21,7 @@ account_blueprint = Blueprint(
 
 @account_blueprint.route('/<int:user_id>')
 def profile(user_id):
+    """Страница профиля"""
     pathsep = os.path.sep
     db_sess = db_session.create_session()
     user = db_sess.query(User).get(user_id)
@@ -36,9 +38,11 @@ def profile(user_id):
 @account_blueprint.route('/delete/<int:video_id>', methods=['GET', 'POST'])
 @login_required
 def delete(video_id):
+    """Удаление видео из бд и хранилища"""
     db_sess = db_session.create_session()
     video = db_sess.query(Video).filter(Video.id == video_id, Video.user == current_user).first()
     if video:
+        # Удаление связанных лайков и дизлайков
         delete_likes_query = user_like_video.delete().where(user_like_video.c.video_liked == video.id)
         db_sess.execute(delete_likes_query)
         delete_dislikes_query = user_dislike_video.delete().where(user_dislike_video.c.video_disliked == video.id)
@@ -61,6 +65,7 @@ def delete(video_id):
 @account_blueprint.route('/edit/video/<int:video_id>', methods=['GET', 'POST'])
 @login_required
 def edit_video(video_id):
+    """Страница изменения видео"""
     form = EditVideoForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
@@ -106,6 +111,7 @@ def edit_video(video_id):
 @account_blueprint.route('/edit/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def edit_user(user_id):
+    """Страница измениения данных пользователя"""
     form = EditUserForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
@@ -134,6 +140,7 @@ def edit_user(user_id):
 @account_blueprint.route('/edit/password/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def edit_password(user_id):
+    """Страница изменения пароля пользователя"""
     form = EditPasswordForm()
 
     if form.validate_on_submit():

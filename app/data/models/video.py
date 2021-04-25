@@ -5,6 +5,7 @@ from sqlalchemy_serializer import SerializerMixin
 
 
 class Video(SqlAlchemyBase, SerializerMixin):
+    """Модель видео"""
     __tablename__ = 'videos'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,

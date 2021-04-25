@@ -1,3 +1,4 @@
+"""API для работы с видео"""
 from flask import jsonify, request
 from data.models.video import Video
 from data.models.association_tables import user_like_video, user_dislike_video
@@ -7,6 +8,7 @@ from flask_login import login_required, current_user
 
 
 def abort_if_video_not_found(video_id):
+    """Выводит ошибку 404 если не найдено видео с таким id"""
     db_sess = db_session.create_session()
     video = db_sess.query(Video).get(video_id)
     if not video:
@@ -14,7 +16,9 @@ def abort_if_video_not_found(video_id):
 
 
 class VideoResource(Resource):
+    """Ресурс для работы с видео"""
     def get(self, video_id):
+        """Получить данные о видео с id = video_id"""
         abort_if_video_not_found(video_id)
         db_sess = db_session.create_session()
         video = db_sess.query(Video).get(video_id)
@@ -23,6 +27,7 @@ class VideoResource(Resource):
 
     @login_required
     def delete(self, video_id):
+        """Удалить видео с id = video_id (можно только пользователю, который загрузил это видео)"""
         abort_if_video_not_found(video_id)
         db_sess = db_session.create_session()
         video = db_sess.query(Video).get(video_id)
@@ -38,6 +43,7 @@ class VideoResource(Resource):
 
     @login_required
     def post(self, video_id):
+        """Изменить видео с id = video_id (можно только пользователю, который загрузил это видео)"""
         abort_if_video_not_found(video_id)
         db_sess = db_session.create_session()
         video = db_sess.query(Video).get(video_id)

@@ -26,6 +26,7 @@ _filename_strip_re = re.compile(r"[^A-Za-zа-яА-ЯёЁ0-9_.-]")
 
 
 def secure_filename_w_cyrillic(filename: str) -> str:
+    """Убирает неправильные для имени файла символы(работает с кириллицей)"""
     if isinstance(filename, text_type):
         from unicodedata import normalize
         filename = normalize("NFKD", filename)

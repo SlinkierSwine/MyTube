@@ -1,3 +1,4 @@
+"""API работы с пользователем"""
 import re
 from flask import jsonify, request
 from data.models.user import User
@@ -7,6 +8,7 @@ from flask_login import login_user
 
 
 def valid_email(email):
+    """Проверка правильности введенного email"""
     regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
     if re.search(regex, email):
         return True
@@ -14,6 +16,7 @@ def valid_email(email):
 
 
 class RegisterResource(Resource):
+    """Ресурс для регистрации пользователя"""
     def post(self):
         db_sess = db_session.create_session()
         username = request.args.get('username')
@@ -33,6 +36,7 @@ class RegisterResource(Resource):
 
 
 class LoginResource(Resource):
+    """Ресурс для входа в аккаунт"""
     def post(self):
         db_sess = db_session.create_session()
         password = request.args.get('password')

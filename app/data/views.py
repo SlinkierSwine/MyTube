@@ -14,6 +14,7 @@ from mypaginator import pager
 
 @app.route("/")
 def index():
+    """Главная страница"""
     pathsep = os.path.sep
     db_sess = db_session.create_session()
     q = request.args.get('search')
@@ -43,6 +44,7 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """Страница регистрации"""
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -67,6 +69,7 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """Страница входа в аккаунт"""
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -97,6 +100,7 @@ def load_user(user_id):
 @app.route("/upload", methods=['GET', 'POST'])
 @login_required
 def upload():
+    """Загрузка видео"""
     form = VideoForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -116,6 +120,7 @@ def upload():
         db_sess.merge(current_user)
         db_sess.commit()
 
+        # Видео загружаются в папку storage/id пользователя/дата загрузки видео
         path = os.path.join(app.config['UPLOAD_PATH'], str(current_user.id))
         path_to_file = os.path.join(path, created_date.strftime('%m-%d-%Y-%H-%M-%S-%f'))
         if os.path.isdir(path):

@@ -2,6 +2,7 @@ import sqlalchemy
 from ..db_session import SqlAlchemyBase
 
 
+# Таблица связи пользователя, лайкнувшего видео
 user_like_video = sqlalchemy.Table(
     'likes',
     SqlAlchemyBase.metadata,
@@ -11,6 +12,7 @@ user_like_video = sqlalchemy.Table(
                       sqlalchemy.ForeignKey('videos.id'))
 )
 
+# Таблица связи пользователя, дизлайкнувшего видео
 user_dislike_video = sqlalchemy.Table(
     'dislikes',
     SqlAlchemyBase.metadata,
