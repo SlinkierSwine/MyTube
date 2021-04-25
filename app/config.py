@@ -1,5 +1,5 @@
 class Config:
-    DEBUG = False
+    DEBUG = True
     SECRET_KEY = 'yandex_lyceumproject'
     UPLOAD_PATH = 'static/storage'  # Папка для загрузки файлов
     VIDEOS_PER_PAGE = 10  # Кол-во видео на одной странице
